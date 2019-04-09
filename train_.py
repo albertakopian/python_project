@@ -1,7 +1,8 @@
 def train_encode(file):
+    alphabet_size = 26
     string = []
-    uppercase = [0] * 26
-    lowercase = [0] * 26
+    uppercase = [0] * alphabet_size
+    lowercase = [0] * alphabet_size
     uppernumber = 0
     lowernumber = 0
 
@@ -15,11 +16,11 @@ def train_encode(file):
 
     if uppernumber != 0:
         for elem in uppercase:
-            string.append(str(round((elem / uppernumber) * 10000)) + ' ')
+            string.append(str(elem / uppernumber) + ' ')
 
     string.append('\n')
 
     if lowernumber != 0:
         for elem in lowercase:
-            string.append(str(round((elem / lowernumber) * 10000)) + ' ')
+            string.append(str(elem / lowernumber) + ' ')
     return ''.join(string)

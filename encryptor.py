@@ -1,5 +1,4 @@
-import encode_
-import decode_
+import decode_and_encode
 import train_
 import hack_
 import argparse
@@ -33,60 +32,38 @@ hack.add_argument('--model-file', type=str, required=True, help='')
 
 args = parser.parse_args()
 
-if args.method == 'encode':
+def proceed_method(args):
+    if args.method == 'train':
+        if args.text_file is not None:
+            with open(args.text_file, 'r') as inputfile:
+                file = inputfile.read()
+        else:
+            file = input()
+        with open(args.model_file, 'w') as modelfile:
+            modelfile.write(train_.train_encode(file))
+        return
+
     if args.input_file is not None:
         with open(args.input_file, 'r') as inputfile:
             file = inputfile.read()
     else:
         file = input()
 
-    if args.output_file is not None:
-        outputfile = open(args.output_file, 'w')
-        outputfile.write(encode_.code(args.cipher, args.key, file))
-        outputfile.close()
-    else:
-        print(encode_.code(args.cipher, args.key, file))
-
-elif args.method == 'decode':
-    if args.input_file is not None:
-        with open(args.input_file, 'r') as inputfile:
-            file = inputfile.read()
-    else:
-        file = input()
+    if args.method == 'hack':
+        with open(args.model_file, 'r') as modelfile:
+            l1 = modelfile.readline()
+            l2 = modelfile.readline()
 
     if args.output_file is not None:
-        outputfile = open(args.output_file, 'w')
-        outputfile.write(decode_.code(args.cipher, args.key, file))
-        outputfile.close()
-    else:
-        print(decode_.code(args.cipher, args.key, file))
-
-elif args.method == 'train':
-    if args.text_file is not None:
-        with open(args.text_file, 'r') as inputfile:
-            file = inputfile.read()
-    else:
-        file = input()
-    modelfile = open(args.model_file, 'w')
-    modelfile.write(train_.train_encode(file))
-    print(train_.train_encode(file))
-    modelfile.close()
-
-elif args.method == 'hack':
-    if args.input_file is not None:
-        with open(args.input_file, 'r') as inputfile:
-            file = inputfile.read()
-    else:
-        file = input()
-
-    modelfile = open(args.model_file, 'r')
-    l1 = modelfile.readline()
-    l2 = modelfile.readline()
-    modelfile.close()
-
-    if args.output_file is not None:
-        outputfile = open(args.output_file, 'w')
-        outputfile.write(hack_.hack(file, l1, l2))
-        outputfile.close()
-    else:
+        with open(args.output_file, 'w') as outputfile:
+            if args.method in ('encode', 'decode'):
+                outputfile.write(eval('decode_and_encode.' + args.cipher + '_' + args.method)(args.key, file))
+            else:
+                outputfile.write(hack_.hack(file, l1, l2))
+    elif args.method == 'hack':
         print(hack_.hack(file, l1, l1))
+    else:
+        print(eval('decode_and_encode.' + args.cipher + '_' + args.method)(args.key, file))
+
+
+proceed_method(args)
