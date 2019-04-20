@@ -32,6 +32,7 @@ hack.add_argument('--model-file', type=str, required=True, help='')
 
 args = parser.parse_args()
 
+
 def proceed_method(args):
     if args.method == 'train':
         if args.text_file is not None:
@@ -51,17 +52,16 @@ def proceed_method(args):
 
     if args.method == 'hack':
         with open(args.model_file, 'r') as modelfile:
-            l1 = modelfile.readline()
-            l2 = modelfile.readline()
+            l = modelfile.readline()
 
     if args.output_file is not None:
         with open(args.output_file, 'w') as outputfile:
             if args.method in ('encode', 'decode'):
                 outputfile.write(eval('decode_and_encode.' + args.cipher + '_' + args.method)(args.key, file))
             else:
-                outputfile.write(hack_.hack(file, l1, l2))
+                outputfile.write(hack_.hack(file, l))
     elif args.method == 'hack':
-        print(hack_.hack(file, l1, l1))
+        print(hack_.hack(file, l))
     else:
         print(eval('decode_and_encode.' + args.cipher + '_' + args.method)(args.key, file))
 

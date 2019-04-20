@@ -1,9 +1,11 @@
+import config
+
+
 def modify_char(elem, shift):
-    alphabet_size = 26
     if 'a' <= elem <= 'z':
-        return chr((ord(elem) - ord('a') + shift) % alphabet_size + ord('a'))
+        return chr((ord(elem) - ord('a') + shift) % config.alphabet_size + ord('a'))
     elif 'A' <= elem <= 'Z':
-        return chr((ord(elem) - ord('A') + shift) % alphabet_size + ord('A'))
+        return chr((ord(elem) - ord('A') + shift) % config.alphabet_size + ord('A'))
     else:
         return elem
 
@@ -36,7 +38,7 @@ def caesar_encode(key, file):
 
 def caesar_decode(key, file):
     key = int(key)
-    return multipurpose_caesar((-1)*key, file)
+    return multipurpose_caesar(-key, file)
 
 
 def vigenere_encode(key, file):
