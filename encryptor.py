@@ -1,5 +1,5 @@
 import decode_and_encode
-import hack_
+import hack_and_train
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -91,11 +91,11 @@ elif args.method == 'decode':
             output_data = decode_and_encode.vigenere_decode(args.key, curr_args['input_data'])
 
 elif args.method == 'hack':
-        output_data = hack_.hack(curr_args['input_data'], curr_args['bar_chart'])
+        output_data = hack_and_train.hack(curr_args['input_data'], curr_args['bar_chart'])
 
 elif args.method == 'train':
         with open(args.model_file, 'w') as modelfile:
-            modelfile.write(hack_.train_encode(curr_args['train_text']))
+            modelfile.write(hack_and_train.train_encode(curr_args['train_text']))
 
 
 print_output_data(output_data, curr_args)
