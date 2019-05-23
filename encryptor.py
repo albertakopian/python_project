@@ -32,70 +32,37 @@ hack.add_argument('--model-file', type=str, required=True, help='')
 args = parser.parse_args()
 
 
-def get_args(args):
-    input_data = None
-    output = None
-    arguments = {}
+def proceed_method(args):
     if args.method == 'train':
         if args.text_file is not None:
-            with open(args.text_file, 'r') as file:
-                train_text = file.read()
+            with open(args.text_file, 'r') as inputfile:
+                file = inputfile.read()
         else:
-            train_text = input()
-        arguments['train_text'] = train_text
-
-    else:
-        if args.method == 'hack':
-            with open(args.model_file, 'r') as modelfile:
-                bar_chart = modelfile.readline()
-            arguments['bar_chart'] = bar_chart
-
-        if args.input_file is not None:
-            with open(args.input_file, 'r') as inputfile:
-                input_data = inputfile.read()
-        else:
-            input_data = input()
-
-        if args.output_file is not None:
-            output = args.output_file
-        arguments['input_data'] = input_data
-        arguments['output'] = output
-    return arguments
-
-
-def print_output_data(output_data, curr_args):
-    if output_data is None:
-        return
-    else:
-        if curr_args['output'] is None:
-            print(output_data)
-        else:
-            with open(curr_args['output'], 'w') as file:
-                file.write(output_data)
-
-
-curr_args = get_args(args)
-output_data = None
-
-if args.method == 'encode':
-        if args.cipher == 'caesar':
-            output_data = decode_and_encode.caesar_encode(args.key, curr_args['input_data'])
-        elif args.cipher == 'vigenere':
-            output_data = decode_and_encode.vigenere_encode(args.key, curr_args['input_data'])
-
-elif args.method == 'decode':
-        if args.cipher == 'caesar':
-            output_data = decode_and_encode.caesar_decode(args.key, curr_args['input_data'])
-
-        elif args.cipher == 'vigenere':
-            output_data = decode_and_encode.vigenere_decode(args.key, curr_args['input_data'])
-
-elif args.method == 'hack':
-        output_data = hack_and_train.hack(curr_args['input_data'], curr_args['bar_chart'])
-
-elif args.method == 'train':
+            file = input()
         with open(args.model_file, 'w') as modelfile:
-            modelfile.write(hack_and_train.train_encode(curr_args['train_text']))
+            modelfile.write(hack_and_train.train_encode(file))
+        return
+
+    if args.input_file is not None:
+        with open(args.input_file, 'r') as inputfile:
+            file = inputfile.read()
+    else:
+        file = input()
+
+    if args.method == 'hack':
+        with open(args.model_file, 'r') as modelfile:
+            l = modelfile.readline()
+
+    if args.output_file is not None:
+        with open(args.output_file, 'w') as outputfile:
+            if args.method in ('encode', 'decode'):
+                outputfile.write(eval('decode_and_encode.' + args.cipher + '_' + args.method)(args.key, file))
+            else:
+                outputfile.write(hack_and_train.hack(file, l))
+    elif args.method == 'hack':
+        print(hack_and_train.hack(file, l))
+    else:
+        print(eval('decode_and_encode.' + args.cipher + '_' + args.method)(args.key, file))
 
 
-print_output_data(output_data, curr_args)
+proceed_method(args)
