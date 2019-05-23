@@ -2,27 +2,41 @@ import decode_and_encode
 import config
 
 
-def hack(file, l):
-    bar_chart = list(map(float, l.split()))
-    considered_bar_chart = [0] * config.alphabet_size
+def fill_curr_bar_chart(file):
     number_of_letters = 0
-
+    curr_bar_chart = [0] * config.alphabet_size
     for elem in file:
         if elem.isalpha():
             number_of_letters += 1
-            considered_bar_chart[ord(elem.capitalize()) - ord('A')] += 1
+            curr_bar_chart[ord(elem.capitalize()) - ord('A')] += 1
+    return number_of_letters, curr_bar_chart
 
-    for shift in range(config.alphabet_size):
-        difference = 0
-        if number_of_letters != 0:
+
+def train_encode(file):
+    string = []
+    number_of_letters, bar_chart = fill_curr_bar_chart(file)
+
+    if number_of_letters != 0:
+        for elem in bar_chart:
+            string.append(str(elem / number_of_letters) + ' ')
+
+    return ''.join(string)
+
+
+def hack(file, l):
+    bar_chart = list(map(float, l.split()))
+    number_of_letters, considered_bar_chart = fill_curr_bar_chart(file)
+    key = 0
+
+    if number_of_letters != 0:
+        for shift in range(config.alphabet_size):
+            difference = 0
+
             for i in range(config.alphabet_size):
-                difference += abs(bar_chart[i] - considered_bar_chart[i] / number_of_letters)
-        tmp = considered_bar_chart[0]
-        del considered_bar_chart[0]
-        considered_bar_chart.append(tmp)
+                    difference += abs(bar_chart[i] - considered_bar_chart[(i + shift) % config.alphabet_size] / number_of_letters)
 
-        if shift == 0 or mindifference > difference:
-            key = shift
-            mindifference = difference
+            if shift == 0 or mindifference > difference:
+                key = shift
+                mindifference = difference
 
     return decode_and_encode.caesar_decode(key, file)

@@ -1,5 +1,4 @@
 import decode_and_encode
-import train_
 import hack_
 import argparse
 
@@ -41,7 +40,7 @@ def proceed_method(args):
         else:
             file = input()
         with open(args.model_file, 'w') as modelfile:
-            modelfile.write(train_.train_encode(file))
+            modelfile.write(hack_.train_encode(file))
         return
 
     if args.input_file is not None:
